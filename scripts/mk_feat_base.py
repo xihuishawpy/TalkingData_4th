@@ -16,8 +16,28 @@ dtypes = {
         }
 nrows=10000
 nrows=None
-train_df = pd.read_csv(input_dir+"/train.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'is_attributed'], nrows=nrows)
-test_df = pd.read_csv(input_dir+"/test_supplement.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time'], nrows=nrows)
+train_df = pd.read_csv(
+    f"{input_dir}/train.csv",
+    dtype=dtypes,
+    usecols=[
+        'ip',
+        'app',
+        'device',
+        'os',
+        'channel',
+        'click_time',
+        'is_attributed',
+    ],
+    nrows=nrows,
+)
+
+test_df = pd.read_csv(
+    f"{input_dir}/test_supplement.csv",
+    dtype=dtypes,
+    usecols=['ip', 'app', 'device', 'os', 'channel', 'click_time'],
+    nrows=nrows,
+)
+
 test_df['is_attributed'] = 0
 
 cst = pytz.timezone('Asia/Shanghai')

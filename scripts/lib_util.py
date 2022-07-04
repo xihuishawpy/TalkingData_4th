@@ -30,10 +30,7 @@ def get_target():
     global target
     if target != '':
         return target
-    if len(sys.argv) > 1:
-        target = sys.argv[1]
-    else:
-        target = default_target
+    target = sys.argv[1] if len(sys.argv) > 1 else default_target
     return target
 
 def reset_target():

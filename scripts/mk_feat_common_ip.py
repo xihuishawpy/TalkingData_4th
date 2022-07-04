@@ -5,8 +5,6 @@ import pytz
 nrows=10000
 nrows=None
 frac=0.01
-frac=False
-
 #######################
 input_dir = '../input'
 work_dir  = '../work'
@@ -19,9 +17,29 @@ dtypes = {
         'is_attributed' : 'uint8',
         'click_id'      : 'uint32'
         }
-train_df = pd.read_csv(input_dir+"/train.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'is_attributed'], nrows=nrows)
-test_df = pd.read_csv(input_dir+"/test_supplement.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'click_id'], nrows=nrows)
-if frac:
+train_df = pd.read_csv(
+    f"{input_dir}/train.csv",
+    dtype=dtypes,
+    usecols=[
+        'ip',
+        'app',
+        'device',
+        'os',
+        'channel',
+        'click_time',
+        'is_attributed',
+    ],
+    nrows=nrows,
+)
+
+test_df = pd.read_csv(
+    f"{input_dir}/test_supplement.csv",
+    dtype=dtypes,
+    usecols=['ip', 'app', 'device', 'os', 'channel', 'click_time', 'click_id'],
+    nrows=nrows,
+)
+
+if frac := False:
     train_df = train_df.sample(frac=frac)
     test_df = test_df.sample(frac=frac)
 test_df['is_attributed'] = 0
@@ -53,15 +71,18 @@ for d in range(fday,lday+1):
 flt_ip = df.ip.isin(com_set)
 df[name] = (df['ip']+1) * flt_ip
 
-df[[name]][len_train:].to_csv(work_dir + '/test_supplement_' + name + '.csv', index=False)
-print('done for',work_dir + '/test_supplement_' + name + '.csv')
-df[[name]][:len_train].to_csv(work_dir + '/train_' + name + '.csv', index=False)
-print('done for',work_dir + '/train_' + name + '.csv')
+df[[name]][len_train:].to_csv(
+    f'{work_dir}/test_supplement_{name}.csv', index=False
+)
+
+print('done for', f'{work_dir}/test_supplement_{name}.csv')
+df[[name]][:len_train].to_csv(f'{work_dir}/train_{name}.csv', index=False)
+print('done for', f'{work_dir}/train_{name}.csv')
 
 ######################
 com_df = df[flt_ip]
 def dump_pct_com_ip(pct):
-    name = "com" + str(pct) + "_ip"
+    name = f"com{str(pct)}_ip"
     dummy = 'is_attributed'
     cols = ['ip', 'day']
     cols_with_dummy = cols.copy()
