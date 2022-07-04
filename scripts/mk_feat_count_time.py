@@ -20,9 +20,35 @@ dtypes = {
         'is_attributed' : 'uint8',
         'click_id'      : 'uint32'
         }
-train_df = pd.read_csv(input_dir+"/train.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'is_attributed'], nrows=nrows)
-test_df = pd.read_csv(input_dir+"/test_supplement.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'click_id'], nrows=nrows)
-test_org_df = pd.read_csv(input_dir+"/test.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'click_id'], nrows=nrows)
+train_df = pd.read_csv(
+    f"{input_dir}/train.csv",
+    dtype=dtypes,
+    usecols=[
+        'ip',
+        'app',
+        'device',
+        'os',
+        'channel',
+        'click_time',
+        'is_attributed',
+    ],
+    nrows=nrows,
+)
+
+test_df = pd.read_csv(
+    f"{input_dir}/test_supplement.csv",
+    dtype=dtypes,
+    usecols=['ip', 'app', 'device', 'os', 'channel', 'click_time', 'click_id'],
+    nrows=nrows,
+)
+
+test_org_df = pd.read_csv(
+    f"{input_dir}/test.csv",
+    dtype=dtypes,
+    usecols=['ip', 'app', 'device', 'os', 'channel', 'click_time', 'click_id'],
+    nrows=nrows,
+)
+
 
 len_train = len(train_df)
 df=train_df.append(test_df)

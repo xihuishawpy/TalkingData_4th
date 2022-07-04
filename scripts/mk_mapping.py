@@ -23,13 +23,12 @@ def _read_same_time(lines, unprocessed_line):
         if not unprocessed_line:
             return unprocessed_line, click_id_dict, group_time
         click_id, payload, click_time = _split(unprocessed_line)
-        if group_time == click_time:
-            if payload in click_id_dict:
-                click_id_dict[payload].append(click_id)
-            else:
-                click_id_dict[payload] = [click_id]
-        else:
+        if group_time != click_time:
             return unprocessed_line, click_id_dict, group_time
+        if payload in click_id_dict:
+            click_id_dict[payload].append(click_id)
+        else:
+            click_id_dict[payload] = [click_id]
 
 def _find_time(lines, group_time, unprocessed_line):
     if unprocessed_line:
@@ -47,10 +46,12 @@ def _save(output, test_click_id_dict, old_test_click_id_dict):
     for payload, click_ids in test_click_id_dict.items():
         old_click_ids = old_test_click_id_dict[payload]
         if len(old_click_ids) != len(click_ids):
-            print('Number of ids mismatch for "{}", test ids = {}, old test ids = {}'.format(payload, click_ids,
-                                                                                             old_click_ids))
+            print(
+                f'Number of ids mismatch for "{payload}", test ids = {click_ids}, old test ids = {old_click_ids}'
+            )
+
         for i in range(len(click_ids)):
-            output.write('{},{}\n'.format(click_ids[i], old_click_ids[i]))
+            output.write(f'{click_ids[i]},{old_click_ids[i]}\n')
 
 
 with open(file_path, "r", encoding="utf-8") as test:
@@ -67,9 +68,6 @@ with open(file_path, "r", encoding="utf-8") as test:
                 old_test_unprocessed_line, old_test_click_id_dict, _ = _read_same_time(old_test,
                                                                                        old_test_unprocessed_line)
                 _save(output, test_click_id_dict, old_test_click_id_dict)
-        pass
-
-
 import pandas as pd
 mapping = pd.read_csv(output_file_path, dtype={'click_id': 'int32','old_click_id': 'int32'}, engine='c',
                 na_filter=False,memory_map=True)

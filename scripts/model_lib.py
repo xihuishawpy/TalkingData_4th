@@ -32,8 +32,7 @@ def get_params(params_str):
         print('names:',names)
         print('param_values:',pvals)
         sys.exit()
-    params = dict(zip(names, pvals))
-    return params
+    return dict(zip(names, pvals))
 
 def LGBM(X_tr,X_va,X_te,predictors,cat_feats,seed=2018):
     params_str = get_opt('params')
@@ -173,16 +172,17 @@ class EarlyStopping(Callback):
             roc_te = roc_auc_score(self.y_te, y_hat_te)
         else:
             roc_te = 0
-        print('roc-auc: %s - roc-auc_val: %s - roc-auc_test: %s' % (str(round(roc_tr,6)),str(round(roc_val,6)), str(round(roc_te,6))),end=100*' '+'\n')
+        print(
+            f'roc-auc: {str(round(roc_tr,6))} - roc-auc_val: {str(round(roc_val,6))} - roc-auc_test: {str(round(roc_te,6))}',
+            end=100 * ' ' + '\n',
+        )
+
 
         if self.model_file:
             print("saving",self.model_file+'.'+str(epoch))
             self.model.save_weights(self.model_file+'.'+str(epoch))
-        if(self.x_val):
-            if get_opt('testCheck','-') == 'on': 
-                current = roc_te
-            else:
-                current = roc_val
+        if self.x_val:
+            current = roc_te if get_opt('testCheck','-') == 'on' else roc_val
             if self.monitor_op(current - self.min_delta, self.best):
                 self.best = current
                 self.best_epoch = epoch

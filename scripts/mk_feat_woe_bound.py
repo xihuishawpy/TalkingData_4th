@@ -7,8 +7,6 @@ import pytz
 nrows=10000
 nrows=None
 frac=0.01
-frac=False
-
 #######################
 input_dir = '../input'
 work_dir  = '../work'
@@ -21,11 +19,37 @@ dtypes = {
         'is_attributed' : 'uint8',
         'click_id'      : 'uint32'
         }
-train_df = pd.read_csv(input_dir+"/train.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'is_attributed'], nrows=nrows)
-train_df['nextClickLeakDayFlt']  = pd.read_csv(work_dir+"/train_nextClickLeakDayFlt.csv", nrows=nrows)
-test_df = pd.read_csv(input_dir+"/test_supplement.csv", dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'click_id'], nrows=nrows)
-test_df['nextClickLeakDayFlt']  = pd.read_csv(work_dir+"/test_supplement_nextClickLeakDayFlt.csv", nrows=nrows)
-if frac:
+train_df = pd.read_csv(
+    f"{input_dir}/train.csv",
+    dtype=dtypes,
+    usecols=[
+        'ip',
+        'app',
+        'device',
+        'os',
+        'channel',
+        'click_time',
+        'is_attributed',
+    ],
+    nrows=nrows,
+)
+
+train_df['nextClickLeakDayFlt'] = pd.read_csv(
+    f"{work_dir}/train_nextClickLeakDayFlt.csv", nrows=nrows
+)
+
+test_df = pd.read_csv(
+    f"{input_dir}/test_supplement.csv",
+    dtype=dtypes,
+    usecols=['ip', 'app', 'device', 'os', 'channel', 'click_time', 'click_id'],
+    nrows=nrows,
+)
+
+test_df['nextClickLeakDayFlt'] = pd.read_csv(
+    f"{work_dir}/test_supplement_nextClickLeakDayFlt.csv", nrows=nrows
+)
+
+if frac := False:
     train_df = train_df.sample(frac=frac)
     test_df = test_df.sample(frac=frac)
 test_df['is_attributed'] = 0
@@ -59,7 +83,7 @@ def add_col(train_df,test_df,ptn):
 
     df_list_crr = []
     s = 0.1**8
-    for i,day in enumerate(range(fday,lday+1)):
+    for day in range(fday,lday+1):
         tdf = tgt_hour_df[tgt_hour_df.day != day]
         gp = tdf[cols_with_dummy].groupby(by=cols)[[dummy]].agg(['count','sum']).is_attributed.reset_index()
         #gp[name] = round(gp['sum']/gp['count'],8)

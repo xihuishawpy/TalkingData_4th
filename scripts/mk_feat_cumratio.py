@@ -12,7 +12,7 @@ nrows=None
 
 def read_csv(csv_file,df_len=None,nrows=None,usecols=None,dtype=None,is_le=False):
     pkl_file = csv_file[:-4] + '.pkl'
-    if os.path.isfile(pkl_file) and nrows == None:
+    if os.path.isfile(pkl_file) and nrows is None:
         with open(pkl_file, 'rb') as pk:
             print("loading",pkl_file)
             df = pickle.load(pk)
